@@ -1,0 +1,201 @@
+<!-- Header -->
+<div class="md:flex md:items-center md:justify-between mb-12">
+    <div class="min-w-0 flex-1">
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+            Documents
+        </h2>
+    </div>
+    <div class="mt-4 flex md:mt-0 md:ml-4">
+        <a [routerLink]="['/add-file']" [queryParams]="{nodeId: currentFolderId}" type="button"
+            class="inline-flex items-center rounded-md bg-teal-600 px-3 py-2 text-md font-semibold text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600">
+            <svg class="mr-1.5 h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" class="lucide lucide-plus">
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+            </svg>
+            New file
+        </a>
+    </div>
+</div>
+
+<!-- Breadcrumb -->
+<nav class="flex border-b border-gray-200 bg-white rounded-md" aria-label="Breadcrumb">
+    <ol role="list" class="px-4 flex w-full max-w-screen-xl space-x-4 ">
+        <li class="flex hover:cursor-pointer" *ngIf="history.length > 0" (click)="back()">
+            <div class="flex items-center">
+                <span class="text-gray-400 hover:text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-arrow-left">
+                        <path d="m12 19-7-7 7-7" />
+                        <path d="M19 12H5" />
+                    </svg>
+                </span>
+                <svg class="h-full w-6 flex-shrink-0 text-gray-200" viewBox="0 0 24 44" preserveAspectRatio="none"
+                    fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+                </svg>
+            </div>
+        </li>
+
+        <li class="flex hover:cursor-pointer" (click)="listFolder()">
+            <div class="flex items-center">
+                <span class="text-gray-600 hover:text-gray-500">
+                    <svg class="h-full w-6 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="lucide lucide-home">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
+                </span>
+                <svg *ngIf="breadcrumb.length == 0" class="h-full w-6 flex-shrink-0 text-gray-200" viewBox="0 0 24 44"
+                    preserveAspectRatio="none" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true">
+                    <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+                </svg>
+            </div>
+        </li>
+
+
+        <li class="flex" *ngFor="let item of breadcrumb" (click)="browse(item?.id)">
+            <div class="flex items-center">
+                <svg class="h-full w-6 flex-shrink-0 text-gray-200" viewBox="0 0 24 44" preserveAspectRatio="none"
+                    fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+                </svg>
+                <span href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:cursor-pointer">
+                    {{item.name}}
+                </span>
+            </div>
+        </li>
+    </ol>
+</nav>
+
+<!-- Listing -->
+<div class="mt-12" *ngIf="entries.length > 0">
+    <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+        <li *ngFor="let node of entries" class="col-span-1 flex rounded-md shadow-sm hover:cursor-pointer"
+            (dblclick)="node.isFolder ? browse(node.id) : download(node.id, node.name)">
+            <div [ngClass]="node.isFolder ? 'bg-yellow-500' : 'bg-gray-500'"
+                class="flex-shrink-0 flex items-center justify-center w-16  text-white text-sm font-semibold rounded-l-md">
+                <svg *ngIf="node.isFolder" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-folder">
+                    <path
+                        d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+                </svg>
+                <svg *ngIf="node.isFile" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-file-text">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" x2="8" y1="13" y2="13" />
+                    <line x1="16" x2="8" y1="17" y2="17" />
+                    <line x1="10" x2="8" y1="9" y2="9" />
+                </svg>
+            </div>
+            <div
+                class="flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 bg-white">
+                <div class="flex-1 truncate px-4 py-2 text-sm">
+                    <span href="#" class="font-semibold text-gray-900 hover:text-gray-600">{{node.name}}</span>
+                    <p *ngIf="node.isFolder" class="text-gray-500 text-xs">Last update: {{node.modifiedAt |
+                        date:'dd-MMM-yy hh:mm'}}</p>
+                    <p *ngIf="node.isFile" class="text-gray-500 text-xs">Size {{node?.content?.sizeInBytes ?? 0 | fileSize}}</p>
+                </div>
+                <div class="flex-shrink-0 pr-2">
+                    <button (click)="showDetails(node)" type="button" class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white bg-transparent text-gray-400 hover:text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    </button>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<!-- Empty -->
+<div *ngIf="entries.length == 0" class="mt-12 flex justify-center">
+    <a href="#" [routerLink]="['/add-file']" [queryParams]="{nodeId: currentFolderId}"
+        class="relative block w-96 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            aria-hidden="true">
+            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+        </svg>
+        <span class="mt-2 block text-sm font-medium text-gray-900">Add a new file</span>
+    </a>
+</div>
+
+<!-- Details -->
+<div class="relative z-10" role="dialog" aria-modal="true" [hidden]="!isPanelShown">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+    <div class="fixed inset-0 overflow-hidden">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                <div class="pointer-events-auto relative w-96">
+                    <div class="absolute top-0 left-0 -ml-8 flex pt-4 pr-2 sm:-ml-10 sm:pr-4">
+                        <button type="button" (click)="toggleDetailsPanel()"
+                            class="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
+                            <span class="sr-only">Close panel</span>
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="h-full overflow-y-auto bg-white p-8">
+                        <div class="space-y-6 pb-16">
+                            <div>
+                                <div class="mt-4 flex items-start justify-between">
+                                    <div>
+                                        <h2 class="text-lg font-medium text-gray-900">{{detailledNode?.name}}</h2>
+                                        <p *ngIf="detailledNode?.isFile" class="text-gray-500 text-sm font-semibold">Size {{detailledNode?.content?.sizeInBytes ?? 0 | fileSize}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900">Information</h3>
+                                <dl class="mt-2 divide-y divide-gray-200 border-t border-b border-gray-200">
+                                    <div class="flex justify-between py-3 text-sm font-medium">
+                                        <dt class="text-gray-500">Uploaded by</dt>
+                                        <dd class="text-gray-900">{{detailledNode?.createdByUser?.displayName}}</dd>
+                                    </div>
+                                    <div class="flex justify-between py-3 text-sm font-medium">
+                                        <dt class="text-gray-500">Created</dt>
+                                        <dd class="text-gray-900">{{detailledNode?.createdAt | date: 'dd MMMM yyyy, hh:mm'}}</dd>
+                                    </div>
+                                    <div class="flex justify-between py-3 text-sm font-medium">
+                                        <dt class="text-gray-500">Last modified</dt>
+                                        <dd class="text-gray-900">{{detailledNode?.modifiedAt | date: 'dd MMMM yyyy, hh:mm'}}</dd>
+                                    </div>
+                                    <div class="flex justify-between py-3 text-sm font-medium">
+                                        <dt class="text-gray-500">File type</dt>
+                                        <dd class="text-gray-900"> {{detailledNode?.isFolder ? 'Folder': detailledNode?.content?.mimeTypeName}}</dd>
+                                    </div>
+                                    <div class="flex justify-between py-3 text-sm font-medium">
+                                        <dt class="text-gray-500">Path</dt>
+                                        <dd class="text-gray-900">{{detailledNode?.path?.name}}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900">Description</h3>
+                                <div class="mt-2 flex items-center justify-between">
+                                    <p class="text-sm italic text-gray-500">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nam, minima? Officiis inventore consequuntur delectus doloribus vel enim maxime dolorem at asperiores facere sunt eos, nam fugiat non facilis eaque assumenda!</p>
+                                </div>
+                            </div>
+                            <div class="flex">
+                                <button type="button" (click)="download(detailledNode?.id, detailledNode?.name)" [hidden]="detailledNode?.isFolder"
+                                    class="flex-1 rounded-md border border-transparent bg-teal-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-teal-700">Download</button>
+                                <button type="button"
+                                    class="ml-3 flex-1 rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-orange-600 hover:text-white">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

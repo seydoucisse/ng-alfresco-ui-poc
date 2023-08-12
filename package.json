@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "gc": "ng generate component ",
+    "gs": "ng generate service ",
+    "gen:api": "openapi-generator-cli generate -i ./alfresco-core.yaml -g typescript-angular -o src/app/alfresco/api/v1"
   },
   "private": true,
   "dependencies": {
@@ -26,13 +29,18 @@
     "@angular-devkit/build-angular": "^16.2.0",
     "@angular/cli": "~16.2.0",
     "@angular/compiler-cli": "^16.2.0",
+    "@openapitools/openapi-generator-cli": "^2.7.0",
+    "@tailwindcss/forms": "^0.5.4",
     "@types/jasmine": "~4.3.0",
+    "autoprefixer": "^10.4.14",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
     "typescript": "~5.1.3"
   }
 }
